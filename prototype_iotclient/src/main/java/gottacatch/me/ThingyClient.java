@@ -24,19 +24,17 @@ class ThingyClient
 		
 		Topic[] topics = {new Topic("+/devices/+/up", QoS.AT_LEAST_ONCE)};
 		connection.subscribe(topics);
+		System.out.println("now connected; entering event loop");
 		
 		while(true)
 		{
-			System.out.println("Waiting for a message");
 			Message message = connection.receive();
-			System.out.println(message.getTopic());
 			byte[] payload = message.getPayload();
-			System.out.println("Got message of " + payload.length + " bytes");
 			
 			HashMap<String,Object> result = new ObjectMapper().readValue(payload, HashMap.class);
-			
 			HashMap<String,Object> stuff = (HashMap<String,Object>)result.get("fields");
-			System.out.println(stuff);
+			
+//			System.out.println(stuff);
 			
 			if (stuff.get("msgtype").equals("login"))
 			{
@@ -52,7 +50,6 @@ class ThingyClient
 				System.out.println("Got an unrecognized message!");
 			}
 			
-			System.out.println();
 			// process the message then:
 			message.ack();
 		}
