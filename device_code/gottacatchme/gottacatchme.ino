@@ -18,7 +18,6 @@ const byte appKey[16] = { 0x26, 0x6B, 0x9F, 0x5B, 0x3F, 0x42, 0x81, 0x79, 0x0D, 
 TheThingsUno ttu;
 
 unsigned long keypresstime;
-
 unsigned long locationtime;
 
 void setup() 
@@ -67,6 +66,8 @@ int get_button()
 
 int isCodeEntered()
 {
+  unsigned long current_time = millis();
+  
   int but = get_button();
   int result = NO_CODE;
   
@@ -91,6 +92,13 @@ int isCodeEntered()
 
   if (last_but == 0)
   {
+    if (current_time - keypresstime > 3000)
+    {
+      current_num = 0;
+    }
+
+    keypresstime = current_time;
+    
     Serial.print(but);
     code_entered[current_num] = but;
     current_num++;
@@ -136,7 +144,7 @@ void loop() {
   }
 
   unsigned long current_time = millis();
-  if (current_time - locationtime > 10000)
+  if (current_time - locationtime > 20000)
   {
     struct location loc = getLocation();
 

@@ -30,6 +30,7 @@ class ThingyClient
 		{
 			Message message = connection.receive();
 			byte[] payload = message.getPayload();
+			String device = message.getTopic().replace("up", "down");
 			
 			HashMap<String,Object> result = new ObjectMapper().readValue(payload, HashMap.class);
 			HashMap<String,Object> stuff = (HashMap<String,Object>)result.get("fields");
@@ -52,6 +53,10 @@ class ThingyClient
 			
 			// process the message then:
 			message.ack();
+			
+//			System.out.println("sending");
+//			connection.publish(device, "hi".getBytes(), QoS.AT_LEAST_ONCE, false);
+//			System.out.println("sent");
 		}
 	}
 }
