@@ -144,7 +144,7 @@ void loop() {
   }
 
   unsigned long current_time = millis();
-  if (current_time - locationtime > 20000)
+  if (current_time - locationtime > 30000)
   {
     struct location loc = getLocation();
 

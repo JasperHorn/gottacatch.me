@@ -51,7 +51,6 @@ class ThingyClient
 				System.out.println("Got an unrecognized message!");
 			}
 			
-			// process the message then:
 			message.ack();
 			
 //			System.out.println("sending");
