@@ -36,9 +36,16 @@ class ThingyClient
 			HashMap<String,Object> result = new ObjectMapper().readValue(payload, HashMap.class);
 			
 			HashMap<String,Object> stuff = (HashMap<String,Object>)result.get("fields");
+			System.out.println(stuff);
+			
 			if (stuff.get("msgtype").equals("login"))
 			{
 				System.out.println("Got a login message; login was " + (stuff.get("success").equals("true") ? "successful":"Unsuccessful"));
+			}
+			else if (stuff.get("msgtype").equals("location"))
+			{
+				System.out.println("Got a location message; location was (" + 
+						stuff.get("latitude") + ", " + stuff.get("longitude") + ")");
 			}
 			else
 			{
