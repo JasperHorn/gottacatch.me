@@ -1,0 +1,12 @@
+{
+    "home": {
+        "title": "Welcome, Catcher!",
+        "subtitle": "Time to find your targets",
+        "logged": {
+            "message": "You are logged in as user \"{{username}}\"."
+        },
+        "link": {
+            "homepage": "GottaCatch.me homepage"
+        }
+    }
+}
