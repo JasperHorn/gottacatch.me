@@ -1,0 +1,18 @@
+Demo:
+
+
+Show:
+* Game - intro page: picture of 'thing' to find
+  -> Also: show the .me domain
+  -> Also: AWS hosting!
+* show physical thing (arduino)
+* Move to personal page with hints
+* admin page -
+  -> Show location of object! (Map?) - Device knows where it is - to be built :-)
+  -> click Add Hint -> Get SMS!
+* Expand on possible 'subgames' to earn your hints - using Deezer; Yay :-)
+* Then enter the code on the thing - someone has found it
+* Admin page should show 'in transit!'
+  -> Talk about Uber -> show Uber coordinates!
+
+(API Partners used: AWS, .me, Things Network, cm-telecom, Uber,     potentially Deezer, Yay)
