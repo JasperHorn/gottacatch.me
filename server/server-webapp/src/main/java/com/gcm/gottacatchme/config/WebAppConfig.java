@@ -26,12 +26,16 @@ public class WebAppConfig
 	@Bean
 	public Server serverJaxRS(
 		@Qualifier("com.wccgroup.elise.servicebean")
-		List<Object> serviceBeans, Bus bus)
+		List<Object> serviceBeans,
+		@Qualifier("javax.ws.rs.provider")
+		List<Object> providers,
+		Bus bus)
 	{
 		JAXRSServerFactoryBean factoryBean = new JAXRSServerFactoryBean();
 		factoryBean.setBus(bus);
 		factoryBean.setAddress("/");
 		factoryBean.setServiceBeans(serviceBeans);
+		factoryBean.setProviders(providers);
 		factoryBean.setInInterceptors(asInterceptorsList(new JAXRSBeanValidationInInterceptor()));
 		factoryBean.setOutInterceptors(asInterceptorsList(new JAXRSBeanValidationOutInterceptor()));
 

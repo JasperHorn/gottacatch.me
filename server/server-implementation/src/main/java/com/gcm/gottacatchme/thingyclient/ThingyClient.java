@@ -12,6 +12,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class ThingyClient
 {
+	public enum ThingStatus {
+		IN_TRANSIT,
+		AT_LOCATION,
+		AWAITING_TRANSIT
+	}
+	
+	private ThingStatus status = ThingStatus.AT_LOCATION;
+	private String latitude;
+	private String longitude;
+	
 	public ThingyClient()
 	{
 		Thread t = new Thread(new Runnable(){
@@ -30,7 +40,7 @@ public class ThingyClient
 		t.start();
 	}
 	
-	public static void mainLoop() throws Exception{
+	public void mainLoop() throws Exception{
 		MQTT mqtt = new MQTT();
 		mqtt.setHost("staging.thethingsnetwork.org", 1883);
 		mqtt.setUserName("70B3D57ED00001F2");
@@ -57,12 +67,24 @@ public class ThingyClient
 			
 			if (stuff.get("msgtype").equals("login"))
 			{
-				System.out.println("Got a login message; login was " + (stuff.get("success").equals("true") ? "successful":"Unsuccessful"));
+				boolean loginSuccess = stuff.get("success").equals("true");
+				
+				System.out.println("Got a login message; login was " + (loginSuccess ? "successful":"Unsuccessful"));
+				
+				if (loginSuccess)
+				{
+					// TODO: Call the Uber API
+					this.setStatus(ThingStatus.IN_TRANSIT);
+				}
 			}
 			else if (stuff.get("msgtype").equals("location"))
 			{
 				System.out.println("Got a location message; location was (" + 
 						stuff.get("latitude") + ", " + stuff.get("longitude") + ")");
+				
+				this.setLatitude(stuff.get("latitude"));
+				this.setLongitude(stuff.get("longitude"));
+				this.setStatus(ThingStatus.AT_LOCATION);
 			}
 			else
 			{
@@ -75,5 +97,29 @@ public class ThingyClient
 //			connection.publish(device, "hi".getBytes(), QoS.AT_LEAST_ONCE, false);
 //			System.out.println("sent");
 		}
+	}
+
+	public ThingStatus getStatus() {
+		return status;
+	}
+
+	public void setStatus(ThingStatus status) {
+		this.status = status;
+	}
+
+	public String getLatitude() {
+		return latitude;
+	}
+
+	public void setLatitude(Object latitude) {
+		this.latitude = latitude.toString();
+	}
+
+	public String getLongitude() {
+		return longitude;
+	}
+
+	public void setLongitude(Object longitude) {
+		this.longitude = longitude.toString();
 	}
 }
