@@ -3,6 +3,7 @@
 #define debugSerial Serial
 #define loraSerial Serial1
 
+// Defs for reading the touch keypad.
 #define CLOCK_PIN 8
 #define DATA_PIN 9
 
@@ -18,6 +19,8 @@ TheThingsUno ttu;
 
 unsigned long keypresstime;
 
+unsigned long locationtime;
+
 void setup() 
 {
 //  Serial.begin(9600);
@@ -25,7 +28,7 @@ void setup()
   pinMode(DATA_PIN, INPUT);
   digitalWrite(CLOCK_PIN, HIGH);
 
-  keypresstime = millis();
+  locationtime = keypresstime = millis();
 
   debugSerial.begin(115200);
   loraSerial.begin(57600);
@@ -98,6 +101,25 @@ int isCodeEntered()
   return NO_CODE;
 }
 
+struct location
+{
+  float latitude;
+  float longitude;
+} ;
+
+struct location getLocation()
+{
+  return {52.3702, 4.8952};
+}
+
+void convertLong(byte* pOut, long in)
+{
+  pOut[0] = in & 0xFF;
+  pOut[1] = in>>8 & 0xFF;
+  pOut[2] = in>>16 & 0xFF;
+  pOut[3] = in>>24 & 0xFF;  
+}
+
 void loop() {
   int result = isCodeEntered();
   if (result != NO_CODE) {
@@ -112,5 +134,26 @@ void loop() {
 
     ttu.sendBytes(msg, 2);
   }
+
+  unsigned long current_time = millis();
+  if (current_time - locationtime > 10000)
+  {
+    struct location loc = getLocation();
+
+    long lat = loc.latitude;
+    long lon = loc.longitude;
+
+    int messageSize = 2*sizeof(long) + 2;
+    byte message[messageSize];
+    message[0] = 0xFF;
+    message[1] = 0xFF;
+    convertLong(&message[2], lat);
+    convertLong(&message[6], lon);
+  
+    ttu.sendBytes(message,messageSize);
+
+    locationtime = current_time;
+  }
+  
   delay(10);
 }
