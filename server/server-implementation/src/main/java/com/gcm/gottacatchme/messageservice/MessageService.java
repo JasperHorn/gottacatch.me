@@ -8,7 +8,8 @@ import org.w3c.dom.*;
 import javax.xml.transform.*;
 import javax.xml.transform.dom.DOMSource; import javax.xml.transform.stream.StreamResult;
 
-class MessageService {
+public class MessageService {
+	
     public static final String URL = "https://sgw01.cm.nl/gateway.ashx";
 
     public static void sendHintToUser(String hintText) {

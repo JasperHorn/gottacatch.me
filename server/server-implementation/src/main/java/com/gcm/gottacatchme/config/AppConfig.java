@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Bean;
 import com.gcm.gottacatchme.hello.HelloService;
 import com.gcm.gottacatchme.hello.IHelloService;
 import com.gcm.gottacatchme.thingyclient.*;
+import com.gcm.gottacatchme.messageservice.*;
 
 public class AppConfig
 {
@@ -20,5 +21,11 @@ public class AppConfig
 	public ThingyClient thingyClient()
 	{
 		return new ThingyClient();
+	}
+	
+	@Bean
+	public MessageService messageService()
+	{
+		return new MessageService();
 	}
 }
