@@ -1,0 +1,12 @@
+{
+    "home": {
+        "title": "Welkom, Speurder!",
+        "subtitle": "Tijd om uw doelen te vinden",
+        "logged": {
+            "message": "U bent aangemeld als gebruiker \"{{username}}\"."
+        },
+        "link": {
+            "homepage": "GottaCatch.me startpagina"
+        }
+    }
+}
