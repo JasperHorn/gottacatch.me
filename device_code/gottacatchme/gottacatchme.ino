@@ -140,8 +140,8 @@ void loop() {
   {
     struct location loc = getLocation();
 
-    long lat = loc.latitude;
-    long lon = loc.longitude;
+    long lat = loc.latitude * 256.0 * 4.0;
+    long lon = loc.longitude * 256.0 * 4.0;
 
     int messageSize = 2*sizeof(long) + 2;
     byte message[messageSize];
