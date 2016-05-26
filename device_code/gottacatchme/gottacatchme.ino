@@ -46,7 +46,7 @@ void setup()
 int last_but = 0;
 int code_entered[4];
 int current_num = 0;
-int pincode[] = { 1, 2, 3, 4 };
+int pincode[] = { 1, 1, 1, 1 };
 
 int get_button()
 {

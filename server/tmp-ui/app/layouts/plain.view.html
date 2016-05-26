@@ -1,0 +1,15 @@
+<div class="login-page  skin-yellow">
+   <!-- <header ng-include src="'layouts/partials/header.view.html'" class="main-header" role="navigation"
+            ng-controller="headerController">
+    </header> --> 
+
+    <div>
+        <div ng-if="flash" class="col-md-12 clearfix">
+            <div ng-class="{ 'alert': flash, 'alert-success': flash.type === 'success', 'alert-danger': flash.type === 'error' }"
+                 ng-if="flash" ng-bind="flash.message" class="col-md-6" style="margin: 0 auto"></div>
+        </div>
+
+        <section class="content" ui-view content-wrapper=""></section>
+    </div>
+    <footer ng-include src="'layouts/partials/footer.view.html'" class="main-footer"></footer>
+</div>

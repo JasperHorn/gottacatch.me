@@ -10,7 +10,9 @@ Show:
 * admin page -
   -> Show location of object! (Map?) - Device knows where it is - to be built :-)
   -> click Add Hint -> Get SMS!
-* Expand on possible 'subgames' to earn your hints - using Deezer; Yay :-)
+* Expand on possible 'subgames' to earn your hints 
+  -> using Deezer; Yay :-)
+  -> More sensors: is it raining?
 * Then enter the code on the thing - someone has found it
 * Admin page should show 'in transit!'
   -> Talk about Uber -> show Uber coordinates!

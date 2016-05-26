@@ -1,0 +1,54 @@
+<div class="skin-dark sidebar-mini fixed skin-yellow" ng-class="sidebarClass">
+
+    <div class="wrapper">
+
+<!-- 
+        <header ng-include src="'layouts/partials/header.view.html'" class="main-header" role="navigation"
+                ng-controller="headerController">
+        </header> -->
+
+        <aside ng-include src="'layouts/partials/sidebar.view.html'" class="main-sidebar" role="navigation"
+               ng-controller="navigationController">
+        </aside>
+
+
+        <div class="content-wrapper" content-wrapper="">
+            <!--<div>-->
+
+            <section class="content-header" page-title style="display: none">
+                <h1>
+                    {{globals.currentMenuItem.name || ' Page name'}}
+                    <small> {{globals.currentMenuItem.description || ''}}</small>
+                </h1>
+
+
+            </section>
+
+            <div ng-show="flash" class="col-md-12 clearfix">
+                <div ng-class="{ 'alert': flash, 'alert-success': flash.type === 'success', 'alert-danger': flash.type === 'error', 'alert-info': flash.type === 'info', 'alert-warning': flash.type === 'warning' }"
+                     ng-if="flash" class="alert-dismissable col-lg-3 col-xs-9">
+                    <button class="close" aria-hidden="true" data-dismiss="alert" type="button">×</button>
+                    <h4><i class="icon fa"
+                           ng-class="{'fa-check': flash.type === 'success', 'fa-ban': flash.type === 'error',  'fa-warning': flash.type === 'warning',  'fa-info': flash.type === 'info'}"></i>
+                        {{ flash.type | capitalize}}!</h4>
+
+                    <p string-to-array ng-model="flash.message" ng-repeat="message in flash.message"> {{message}}</p>
+
+                    <a ng-if="flash.details" ng-model="flash.expand" ng-click="flash.expand=!flash.expand">Details</a>
+                    <div ng-show="flash.expand">
+                        <ul>
+                            <li ng-repeat="detail in flash.details">
+                                {{detail}}
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <section class="content preloader-content" ui-view></section>
+
+
+        </div>
+
+    </div>
+</div>

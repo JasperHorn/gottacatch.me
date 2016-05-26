@@ -1,0 +1,13 @@
+<aside class="main-sidebar">
+    <section class="sidebar">
+        <ul class="sidebar-menu">
+            <li class="header">Gotta Catch Me!</li>
+            <li ng-repeat="item in menuItems" class="{{selected(item)}} {{treeview(item)}} menu-open active">
+                <a ng-href="{{item.link}}" ng-click="select(item)" data-test="{{item.name}}">
+                    <i class="fa fa-{{item.icon}}"></i>
+                    <span>{{item.name}}</span>
+                </a>
+            </li>
+        </ul>
+    </section>
+</aside>

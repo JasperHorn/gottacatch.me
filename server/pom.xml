@@ -12,6 +12,7 @@
 		<module>server-implementation</module>
 		<module>server-interface</module>
 		<module>server-webapp</module>
+		<module>tmp-ui</module>
 	</modules>
 
 	<properties>

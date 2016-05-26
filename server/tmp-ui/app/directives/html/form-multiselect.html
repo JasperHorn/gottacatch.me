@@ -1,0 +1,46 @@
+<div class="dualmultiselect">
+    <div class="row">
+        <div class="col-lg-6 col-md-6 col-sm-6">
+            <label>
+                {{labelAll}}
+            </label>
+            <button type="button" class="btn btn-default btn-xs"
+                    ng-click="transfer(itemsLocal, selectedItems, -1)"> {{ ('general.SELECT_ALL' | translate) }}
+            </button>
+            <div class="pool">
+                <ul>
+                    <li ng-repeat="item in itemsLocal | orderBy:keyDisplay track by $index">
+                        <a ng-if="!!keyDisplay" href="" class="" style="width: 100%; display: inline-block"
+                           ng-click="transfer(itemsLocal, selectedItems, $index)">
+                            {{ objectDisplay(item) }} <i class="fa fa-arrow-right align-right"></i>
+
+                        </a>
+                        <a ng-if="!!facetDisplay" href="" class="" style="width: 100%; display: inline-block"
+                           ng-click="transfer(itemsLocal, selectedItems, $index)">
+                            {{ item | facetDisplay }} <i class="fa fa-arrow-right align-right"></i>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="col-lg-6 col-md-6 col-sm-6"><label>{{labelSelected}}</label>
+            <button type="button" class="btn btn-default btn-xs"
+                    ng-click="transfer(selectedItems, itemsLocal, -1)"> {{ ('general.DESELECT_ALL' | translate) }}
+            </button>
+            <div class="pool">
+                <ul>
+                    <li ng-repeat="item in selectedItems | orderBy:keyDisplay track by $index">
+                        <a href="" ng-if="!!keyDisplay" style="width: 100%; display: inline-block" class="text-right"
+                           ng-click="transfer(selectedItems, itemsLocal, $index)">
+                            <i class="fa fa-arrow-left align-left"></i> {{ objectDisplay(item) }}
+                        </a>
+                        <a href="" ng-if="!!facetDisplay" style="width: 100%; display: inline-block" class="text-right"
+                           ng-click="transfer(selectedItems, itemsLocal, $index)">
+                            <i class="fa fa-arrow-left align-left"></i> {{ item | facetDisplay }}
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>

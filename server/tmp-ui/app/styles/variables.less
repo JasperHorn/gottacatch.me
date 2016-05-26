@@ -1,0 +1,135 @@
+//Theme Variables.less
+//=========================
+@import "../../bower_components/bootstrap/less/variables.less";
+
+//PATHS
+//--------------------------------------------------------
+
+@boxed-layout-bg-image-path: "../images/boxed-bg.jpg";
+
+//COLORS
+//--------------------------------------------------------
+
+@light-blue: #3c8dbc; //Primary
+@red: #db5565; //Danger
+@green: #66c796; //Success
+@aqua: #29b6d8; //Info
+@yellow: #ffa54b; //Warning
+@blue: #0073b7;
+@navy: #001F3F;
+@teal: #39CCCC;
+@olive: #3D9970;
+@lime: #01FF70;
+@orange: #f39300;
+@fuchsia: #F012BE;
+@purple: #605ca8;
+@maroon: #db5565;
+@black: #111;
+@gray: #d2d6de;
+
+
+// Official WCC colors, dutch names as they are proper names.
+
+@wcc-oranje: #f39300;
+@wcc-mandarijn: #fff000;
+@wcc-mandarijn30: #ffa54b;
+@wcc-meloen: #ffcc66;
+@wcc-ijzer: #29b6d8;
+@wcc-magnesium: #0073b7;
+@wcc-kwikzilver: #F012BE;
+@wcc-oceaan: #004080;
+@wcc-orchidee: #605ca8;
+@wcc-orchidee50: #b0b0ff;
+
+// END Official WCC colors
+
+//LAYOUT
+//--------------------------------------------------------
+
+//Side bar and logo width
+@sidebar-width: 230px;
+//Boxed layout maximum width
+@boxed-layout-max-width: 1024px;
+//When the logo should go to the top of the screen
+@screen-header-collapse: @screen-xs-max;
+
+//Link colors (Aka: <a> tags)
+@link-color: @light-blue;
+@link-hover-color: lighten(@link-color, 15%);
+
+//Body background (Affects main content background only)
+@body-bg: #ecf0f5;
+
+//SIDEBAR SKINS
+//--------------------------------------------------------
+
+//Dark sidebar
+@sidebar-dark-bg: #222d32;
+@sidebar-dark-hover-bg: darken(@sidebar-dark-bg, 2%);
+@sidebar-dark-color: lighten(@sidebar-dark-bg, 60%);
+@sidebar-dark-hover-color: #fff;
+@sidebar-dark-submenu-bg: lighten(@sidebar-dark-bg, 5%);
+@sidebar-dark-submenu-color: lighten(@sidebar-dark-submenu-bg, 40%);
+@sidebar-dark-submenu-hover-color: #fff;
+
+//Light sidebar
+@sidebar-light-bg: #f9fafc;
+@sidebar-light-hover-bg: lighten(#f0f0f1, 1.5%);
+@sidebar-light-color: #444;
+@sidebar-light-hover-color: #000;
+@sidebar-light-submenu-bg: @sidebar-light-hover-bg;
+@sidebar-light-submenu-color: #777;
+@sidebar-light-submenu-hover-color: #000;
+
+//CONTROL SIDEBAR
+//--------------------------------------------------------
+@control-sidebar-width: @sidebar-width;
+
+//BOXES
+//--------------------------------------------------------
+@box-border-color: #d2d6de;
+@box-border-radius: 3px;
+@box-footer-bg: #fff;
+@box-boxshadow: 0 1px 1px rgba(0, 0, 0, .1);
+@box-padding: 10px;
+
+//Box variants
+@box-default-border-top-color: #d2d6de;
+
+//BUTTONS
+//--------------------------------------------------------
+@btn-boxshadow: none;
+
+//PROGRESS BARS
+//--------------------------------------------------------
+@progress-bar-border-radius: 1px;
+@progress-bar-sm-border-radius: 1px;
+@progress-bar-xs-border-radius: 1px;
+
+//FORMS
+//--------------------------------------------------------
+@input-radius: 3px;
+
+//BUTTONS
+//--------------------------------------------------------
+
+//Border radius for non flat buttons
+@btn-border-radius: 3px;
+
+//DIRECT CHAT
+//--------------------------------------------------------
+@direct-chat-height: 250px;
+@direct-chat-default-msg-bg: @gray;
+@direct-chat-default-font-color: #444;
+@direct-chat-default-msg-border-color: @gray;
+
+//CHAT WIDGET
+//--------------------------------------------------------
+@attachment-border-radius: 3px;
+
+//TRANSITIONS SETTINGS
+//--------------------------------------------------------
+
+//Transition global options
+@transition-speed: .3s;
+@transition-fn: ease-in-out; //cubic-bezier(0.32,1.25,0.375,1.15);

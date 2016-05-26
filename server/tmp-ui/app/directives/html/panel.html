@@ -1,0 +1,20 @@
+<div class="col-md-{{row || 8}} col-xs-12 col-sm-12">
+    <div class="box" box-wrapper>
+        <div class="box-header with-border">
+            <i ng-if="icon" class="fa fa-{{icon}}"></i>
+            <h3 class="box-title">{{title}}</h3>
+            <div class="box-tools">
+                <div class="input-group">
+                    <div ng-transclude="tools"></div>
+                </div>
+            </div>
+        </div>
+        <!-- /.box-header -->
+        <div class="box-body">
+            <div ng-transclude="body"></div>
+        </div>
+        <!-- /.box-body -->
+        <div ng-transclude="footer"></div>
+    </div>
+    <!-- /.box -->
+</div>

@@ -1,0 +1,28 @@
+<div class="panel box ">
+    <div class="box-header with-border" ng-class="{'collapsed': collapsed == 'false'}">
+
+        <h4 class="box-subtitle" ng-if="accordion" class="">
+            <a href="#collapse{{accordion || ''}}" data-icon="collapse" ng-click="changeCollapse($event);"
+               class="">
+                {{ label }}:
+                <i ng-if="tooltip" tooltip-placement="bottom" uib-tooltip="{{ tooltip }}"
+                   class="fa fa-info-circle text-light-blue"></i>
+            </a>
+        </h4>
+        <h4 class="box-subtitle" ng-if="!accordion">
+            {{ label }}:
+            <i ng-if="tooltip" tooltip-placement="bottom" uib-tooltip="{{ tooltip }}"
+               class="fa fa-info-circle text-light-blue"></i>
+        </h4>
+    </div>
+    <div class="panel-collapse" id="collapse{{accordion || ''}}"
+         ng-class="{'collapsed': collapsed == 'true', 'collapse': accordion, 'in' : collapsed == 'false' }">
+        <div class="box-body" ng-transclude></div>
+        <div class="box-body" ng-if="template" ng-include="" src="template"></div>
+    </div>
+
+
+</div>
+
+
+

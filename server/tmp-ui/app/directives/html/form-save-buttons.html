@@ -1,0 +1,8 @@
+<div class="box-footer">
+    <button ng-if="cancel == 'true'" class="btn btn-default" ng-click="resetData()" back-button type="submit">
+        {{ ('buttons.CANCEL' | translate)}}
+    </button>
+    <button ng-if="save == 'true'" class="btn btn-info pull-right" ng-click="saveData()" type="submit">
+        {{ ('buttons.SAVE' | translate)}}
+    </button>
+</div>

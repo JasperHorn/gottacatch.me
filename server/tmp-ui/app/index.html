@@ -1,0 +1,84 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width">
+
+    <link rel="icon" href="public/favicon.ico" type="image/x-icon"/>
+    <link rel="shortcut icon" href="public/favicon.ico" type="image/x-icon"/>
+    <link rel="icon" type="image/png" href="public/favicon.png"/>
+    <!-- build:css(.) styles/vendor.css -->
+    <!-- bower:css -->
+    <link rel="stylesheet" href="bower_components/ui-select/dist/select.css" />
+    <!-- endbower -->
+    <!-- endbuild -->
+    <!-- build:css(.tmp) styles/main.css -->
+    <link rel="stylesheet" href="styles/main.css">
+
+    <!-- endbuild -->
+
+</head>
+
+<body ng-app="confApp">
+
+<!--[if lte IE 8]>
+<p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade
+    your browser</a> to improve your experience.</p>
+<![endif]-->
+
+<section ui-view="layout"></section>
+
+<!-- build:js(.) scripts/vendor.js -->
+<!-- bower:js -->
+<script src="bower_components/jquery/dist/jquery.min.js"></script>
+<script src="bower_components/angular/angular.min.js"></script>
+<script src="bower_components/angular-animate/angular-animate.min.js"></script>
+<script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
+<script src="bower_components/angular-cookies/angular-cookies.min.js"></script>
+<script src="bower_components/angular-resource/angular-resource.min.js"></script>
+<script src="bower_components/angular-sanitize/angular-sanitize.min.js"></script>
+<script src="bower_components/angular-touch/angular-touch.min.js"></script>
+<script src="bower_components/angular-translate/angular-translate.min.js"></script>
+<script src="bower_components/angular-ui-router/release/angular-ui-router.min.js"></script>
+<script src="bower_components/jquery-ui/jquery-ui.min.js"></script>
+<script src="bower_components/angular-ui-sortable/sortable.min.js"></script>
+<script src="bower_components/x2js/xml2json.min.js"></script>
+<script src="bower_components/angular-xml/angular-xml.min.js"></script>
+<script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="bower_components/lodash/dist/lodash.min.js"></script>
+<script src="bower_components/ui-select/dist/select.min.js"></script>
+<script src="bower_components/select2/dist/js/select2.min.js"></script>
+<script src="bower_components/angular-ui-select3/src/select3.js"></script>
+<!-- endbower -->
+<!-- endbuild -->
+
+<!-- build:js({.tmp,app}) scripts/scripts.js -->
+
+<script src="app.js"></script>
+
+<script src="config/config.js"></script>
+
+<script src="i10n/locale-en.js"></script>
+<script src="i10n/locale-nl.js"></script>
+
+<script src="services/flash.service.js"></script>
+<script src="services/thingystatus.service.js"></script>
+<script src="directives/directives.js"></script>
+<script src="directives/html-snippets-directives.js"></script>
+<script src="filters/filters.js"></script>
+
+<!-- Real user service that uses an api -->
+
+<!-- Fake user service for demo that uses local storage -->
+<script src="modules/home/home.controller.js"></script>
+<script src="modules/home/header.controller.js"></script>
+<script src="modules/home/navigation.controller.js"></script>
+<script src="modules/admin/admin.controller.js"></script>
+<script src="modules/user/user.controller.js"></script>
+
+<!-- endbuild -->
+
+</body>
+</html>

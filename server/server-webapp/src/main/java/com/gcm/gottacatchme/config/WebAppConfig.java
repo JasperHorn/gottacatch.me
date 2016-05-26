@@ -33,7 +33,7 @@ public class WebAppConfig
 	{
 		JAXRSServerFactoryBean factoryBean = new JAXRSServerFactoryBean();
 		factoryBean.setBus(bus);
-		factoryBean.setAddress("/");
+		factoryBean.setAddress("/rest");
 		factoryBean.setServiceBeans(serviceBeans);
 		factoryBean.setProviders(providers);
 		factoryBean.setInInterceptors(asInterceptorsList(new JAXRSBeanValidationInInterceptor()));

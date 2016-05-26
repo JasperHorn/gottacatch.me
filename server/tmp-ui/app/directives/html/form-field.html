@@ -1,0 +1,9 @@
+<div class="form-group">
+    <label class="col-sm-3 control-label">
+        {{ label }}
+        <i ng-if="tooltip" tooltip-placement="bottom" uib-tooltip="{{ tooltip }}" class="fa fa-info-circle text-light-blue"></i>
+    </label>
+    <div class="col-sm-9">
+        <div ng-transclude></div>
+    </div>
+</div>

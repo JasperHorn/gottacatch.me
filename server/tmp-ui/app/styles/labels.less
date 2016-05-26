@@ -1,0 +1,29 @@
+/*
+ * Component: Label
+ * ----------------
+ */
+.label-default {
+  background-color: @gray;
+  color: #444;
+}
+.label-danger {
+  &:extend(.bg-red);
+}
+.label-info {
+  &:extend(.bg-aqua);
+}
+.label-warning {
+  &:extend(.bg-yellow);
+}
+.label-primary {
+  &:extend(.bg-light-blue);
+}
+.label-success {
+  &:extend(.bg-green);
+}
+
+.table span.label {
+  display: inline-block;
+  min-width: 115px;
+  text-align: left;
+}
