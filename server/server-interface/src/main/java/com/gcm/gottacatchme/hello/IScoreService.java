@@ -1,6 +1,8 @@
 package com.gcm.gottacatchme.hello;
 
 import java.util.List;
+
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -19,6 +21,9 @@ public interface IScoreService
 	@POST
 	@Path("/{user}")
 	void addScore(@PathParam("user") String user, @QueryParam("score") int score);
+	
+	@DELETE
+	public void resetScores();
 	
 	public static class ScoreRow
 	{

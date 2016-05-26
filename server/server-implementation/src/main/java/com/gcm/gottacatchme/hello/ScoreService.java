@@ -12,6 +12,10 @@ public class ScoreService implements IScoreService
 	
 	public ScoreService()
 	{
+		initScores();
+	}
+
+	private void initScores() {
 		_scoresMap = new HashMap<>();
 		
 		_scoresMap.put("Jan", new ScoreRow("Jan", 75));
@@ -39,6 +43,12 @@ public class ScoreService implements IScoreService
 		ScoreRow scoreRow = _scoresMap.get(user);
 		
 		scoreRow.setScore(scoreRow.getScore() + score);
+	}
+	
+	@Override
+	public void resetScores()
+	{
+		initScores();
 	}
 
 }
