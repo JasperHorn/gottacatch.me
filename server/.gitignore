@@ -2,3 +2,7 @@
 .project
 .classpath
 target
+.tmp
+bower_components
+node
+node_modules
