@@ -15,13 +15,18 @@
 		.module('confApp')
 		.controller('userController', userController);
 
-	userController.$inject = ['$location', 'authService'];
+	userController.$inject = ['$location', '$http', '$scope'];
 
-	function userController($location, authService)
+	function userController($location, $http, $scope)
 	{
 		var that = this;
 
 		that.login = login;
+		
+		$http.get('rest/scores').then(function(scores)
+		{
+			$scope.scores = scores.data;
+		});
 
 		(function initController()
 		{

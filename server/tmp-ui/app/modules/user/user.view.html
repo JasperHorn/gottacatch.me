@@ -1,1 +1,9 @@
    This is the user page!
+   
+   <h2>Scores</h2>
+	<table class="table">
+		<tr ng-repeat="user in scores | orderBy:'-score'">
+			<td>{{ user.name }}</td>
+			<td>{{ user.score }}</td>
+		</tr>
+	</table>
