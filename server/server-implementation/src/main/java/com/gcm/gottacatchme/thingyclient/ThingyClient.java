@@ -9,6 +9,7 @@ import org.fusesource.mqtt.client.QoS;
 import org.fusesource.mqtt.client.Topic;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gcm.gottacatchme.hello.IScoreService;
 
 public class ThingyClient
 {
@@ -22,8 +23,12 @@ public class ThingyClient
 	private String latitude;
 	private String longitude;
 	
-	public ThingyClient()
+	private IScoreService _scoreService;
+	
+	public ThingyClient(IScoreService scoreService)
 	{
+		_scoreService = scoreService;
+		
 		Thread t = new Thread(new Runnable(){
 			@Override
 			public void run() {
@@ -73,6 +78,8 @@ public class ThingyClient
 				
 				if (loginSuccess)
 				{
+					_scoreService.addScore("Jan", 10);
+					
 					// TODO: Call the Uber API
 					this.setStatus(ThingStatus.IN_TRANSIT);
 				}

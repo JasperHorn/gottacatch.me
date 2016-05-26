@@ -33,4 +33,12 @@ public class ScoreService implements IScoreService
 		return _scores;
 	}
 
+	@Override
+	public void addScore(String user, int score)
+	{
+		ScoreRow scoreRow = _scoresMap.get(user);
+		
+		scoreRow.setScore(scoreRow.getScore() + score);
+	}
+
 }

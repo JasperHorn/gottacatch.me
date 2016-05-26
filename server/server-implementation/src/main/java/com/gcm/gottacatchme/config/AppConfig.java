@@ -53,15 +53,15 @@ public class AppConfig
 	
 	@Bean
 	@Qualifier("com.wccgroup.elise.servicebean")
-	public IScoreService scoreStatus()
+	public IScoreService scoreService()
 	{
 		return new ScoreService();
 	}
 	
 	@Bean
-	public ThingyClient thingyClient()
+	public ThingyClient thingyClient(IScoreService scoreService)
 	{
-		return new ThingyClient();
+		return new ThingyClient(scoreService);
 	}
 	
 	@Bean
