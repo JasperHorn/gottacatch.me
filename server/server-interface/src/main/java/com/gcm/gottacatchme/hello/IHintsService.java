@@ -32,4 +32,8 @@ public interface IHintsService {
 	@POST
 	@Path("/nexthint")
 	String addNextHint();
+	
+	@POST
+	@Path("/resethints")
+	String resetHints();
 }
