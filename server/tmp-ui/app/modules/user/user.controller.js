@@ -15,9 +15,9 @@
 		.module('confApp')
 		.controller('userController', userController);
 
-	userController.$inject = ['hintsService', '$scope'];
+	userController.$inject = ['$location', 'hintsService', '$http', '$scope'];
 
-	function userController(hintsService, $scope)
+	function userController($location, hintsService, $http, $scope)
 	{
 		var that = this;
 
@@ -25,6 +25,11 @@
 		
 		$scope.hints = {};
 		hintsService.getHints().then(function(data){$scope.hints = data});
+
+		$http.get('rest/scores').then(function(scores)
+		{
+			$scope.scores = scores.data;
+		});
 
 		(function initController()
 		{
