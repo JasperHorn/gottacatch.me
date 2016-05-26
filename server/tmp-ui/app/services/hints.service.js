@@ -6,7 +6,7 @@
 		.module('confApp')
 		.factory('hintsService', hintsService);
 
-	v.$inject = ['$http'];
+	hintsService.$inject = ['$http'];
 
 	function hintsService($http)
 	{

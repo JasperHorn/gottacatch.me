@@ -8,7 +8,7 @@
 	</formats>
 	<fileSets>
 		<fileSet>
-			<outputDirectory>config</outputDirectory>
+			<outputDirectory></outputDirectory>
 			<directory>target/dist</directory>
 		</fileSet>
 	</fileSets>

@@ -24,7 +24,7 @@ public class WebAppInitializer extends AbstractContextLoaderInitializer
 	public void onStartup(ServletContext servletContext) throws ServletException
 	{
 		super.onStartup(servletContext);
-		servletContext.addServlet("cxf", new CXFServlet()).addMapping("/*");
+		servletContext.addServlet("cxf", new CXFServlet()).addMapping("/rest/*");
 	}
 
 }
