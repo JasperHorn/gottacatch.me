@@ -5,9 +5,9 @@
 		.module('confApp')
 		.controller('adminController', adminController);
 
-	adminController.$inject = ['thingystatusService', 'hintsService', '$scope', '$interval'];
+	adminController.$inject = ['thingystatusService', 'hintsService', '$scope', '$interval', '$http'];
 
-	function adminController(thingystatusService, hintsService, $scope, $interval)
+	function adminController(thingystatusService, hintsService, $scope, $interval, $http)
 	{
 		var that = this;
 
@@ -19,7 +19,12 @@
 		$scope.hintcount = 0;
 		
 		$scope.nextHint = function() {$scope.hintcount++; hintsService.addNextHint();};
-		$scope.resetHints = function() {$scope.hintcount = 0; hintsService.resetHints();};
+		$scope.resetHints = function()
+		{
+			$scope.hintcount = 0;
+			hintsService.resetHints();
+			$http.delete('rest/scores');
+		};
 	}
 
 })();
