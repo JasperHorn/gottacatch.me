@@ -12,7 +12,6 @@ import java.util.Properties;
 import com.google.api.client.auth.oauth2.Credential;
 import com.uber.sdk.rides.auth.OAuth2Credentials;
 import com.uber.sdk.rides.auth.OAuth2Credentials.Scope;
-import com.uber.sdk.rides.client.Response;
 import com.uber.sdk.rides.client.Session;
 import com.uber.sdk.rides.client.Session.Environment;
 import com.uber.sdk.rides.client.UberRidesServices;
@@ -20,10 +19,10 @@ import com.uber.sdk.rides.client.UberRidesSyncService;
 import com.uber.sdk.rides.client.error.ApiException;
 import com.uber.sdk.rides.client.error.NetworkException;
 import com.uber.sdk.rides.client.model.PaymentMethod;
-import com.uber.sdk.rides.client.model.PaymentMethodsResponse;
 import com.uber.sdk.rides.client.model.Product;
 import com.uber.sdk.rides.client.model.Ride;
 import com.uber.sdk.rides.client.model.RideEstimate;
+import com.uber.sdk.rides.client.model.RideReceipt;
 import com.uber.sdk.rides.client.model.RideRequestParameters;
 import com.uber.sdk.rides.client.model.RideRequestParameters.Builder;
 import com.uber.sdk.rides.client.model.SandboxRideRequestParameters;
@@ -52,123 +51,196 @@ public class PlayGround {
 
 	private void test() {
 		try {
-			// showSomeInfoUsingApp(TNW);
 
-			final Collection<Scope> scopes = new ArrayList<Scope>();
-			scopes.add(Scope.PROFILE);
-			scopes.add(Scope.REQUEST);
-			scopes.add(Scope.ALL_TRIPS);
-			scopes.add(Scope.HISTORY);
-			scopes.add(Scope.PLACES);
-			scopes.add(Scope.REQUEST_RECEIPT);
-			final OAuth2Credentials credentials = new OAuth2Credentials.Builder()
-					.setClientSecrets(appProperties.getClientId(), appProperties.getClientSecret())
-					.setRedirectUri(OAUTH2_CALLBACK_URL).setScopes(scopes).build();
+			final Location pickupLocation = TNW;
+			final Location dropoffLocation = HOME;
 
-			final String authorizationUrl = credentials.getAuthorizationUrl();
+			final OAuth2Credentials credentials = getCredentials();
 
-			System.out.println("Execute this URL in your browser: " + authorizationUrl);
+			final String user = getUserNameFromUser();
 
-			final String user = getUserName();
-			final String authorizationCode = getAuthorizationCode();
+			System.out.println("Execute this URL in your browser and copy the value of code: "
+					+ credentials.getAuthorizationUrl());
 
-			final Credential credential = credentials.authenticate(authorizationCode, user);
+			final String authorizationCode = getAuthorizationCodeFromUser();
 
-			final Session session = new Session.Builder().setCredential(credential).setEnvironment(Environment.SANDBOX)
-					.build();
+			final UberRidesSyncService service = getService(credentials, user, authorizationCode);
 
-			issueAndCompleteRideRequest(session, TNW, HOME);
+			final PaymentMethod paymentMethod = getPaymentMethod(service);
+
+			final Product product = getProduct(service, TNW);
+
+			showProduct(service, product, pickupLocation, dropoffLocation, paymentMethod);
+
+			final Ride ride = getRide(service, pickupLocation, dropoffLocation, product, paymentMethod);
+
+			showRideInfo(service);
+
+			updateSandboxRide(service, RideStatus.ACCEPTED);
+
+			showRideInfo(service);
+
+			updateSandboxRide(service, RideStatus.ARRIVING);
+
+			showRideInfo(service);
+
+			updateSandboxRide(service, RideStatus.IN_PROGRESS);
+
+			showRideInfo(service);
+
+			updateSandboxRide(service, RideStatus.COMPLETED);
+
+			showRideReceipt(service, ride.getRideId());
 		} catch (final Exception e) {
 			e.printStackTrace();
 		}
 	}
 
-	private static String getUserName() throws IOException {
+	private void showRideReceipt(final UberRidesSyncService service, final String rideId)
+			throws ApiException, NetworkException {
+		final RideReceipt rideReceipt = service.getRideReceipt(rideId).getBody();
+		System.out.println("Ride Receipt {");
+		System.out.println("\tcurrency code: " + rideReceipt.getCurrencyCode());
+		System.out.println("\tdistance: " + rideReceipt.getDistance());
+		System.out.println("\tdistance label: " + rideReceipt.getDistanceLabel());
+		System.out.println("\tduration: " + rideReceipt.getDuration());
+		System.out.println("\tnormal fare: " + rideReceipt.getNormalFare());
+		System.out.println("\tride id: " + rideReceipt.getRideId());
+		System.out.println("\tsubtotal" + rideReceipt.getSubTotal());
+		System.out.println("\ttotal charged" + rideReceipt.getTotalCharged());
+		System.out.println("}");
+	}
+
+	private void showRideInfo(final UberRidesSyncService service) throws ApiException, NetworkException {
+		final Ride ride = service.getCurrentRide().getBody();
+		System.out.println("Ride {");
+		System.out.println("\trideId: " + ride.getRideId());
+		System.out.println("\tstatus: " + ride.getStatus());
+		System.out.println("\tETA (in minutes): " + ride.getEta());
+		System.out.println("\tsurge muliplier: " + ride.getSurgeMultiplier());
+		if (ride.getLocation() != null) {
+			System.out.println("\tlatitude: " + ride.getLocation().getLatitude());
+			System.out.println("\tlongitude: " + ride.getLocation().getLongitude());
+			System.out.println("\tbearing: " + ride.getLocation().getBearing());
+		}
+		if (ride.getVehicle() != null) {
+			System.out.println("\tvehicle license plate: " + ride.getVehicle().getLicensePlate());
+			System.out.println("\tvehicle make: " + ride.getVehicle().getMake());
+			System.out.println("\tvehicle model: " + ride.getVehicle().getModel());
+			System.out.println("\tvehicle picture (URL): " + ride.getVehicle().getPictureUrl());
+		}
+		if (ride.getDriver() != null) {
+			System.out.println("\tdriver name: " + ride.getDriver().getName());
+			System.out.println("\tdriver phone number: " + ride.getDriver().getPhoneNumber());
+			System.out.println("\tdriver rating: " + ride.getDriver().getRating());
+			System.out.println("\tdriver picture (URL): " + ride.getDriver().getPictureUrl());
+		}
+		System.out.println("}");
+	}
+
+	/**
+	 * Returns the 'paymentless' payment method.
+	 */
+	private PaymentMethod getPaymentMethod(final UberRidesSyncService service) {
+		return new PaymentMethod() {
+			public String getDesription() {
+				return getPaymentMethodId();
+			}
+
+			public String getPaymentMethodId() {
+				return "paymentless";
+			}
+
+			public String getType() {
+				return getPaymentMethodId();
+			}
+		};
+	}
+
+	private Ride getRide(final UberRidesSyncService service,
+			final Location pickupLocation,
+			final Location dropoffLocation,
+			final Product product,
+			final PaymentMethod paymentMethod) throws ApiException, NetworkException {
+		return service.requestRide(getRideRequestParametersBuilder(pickupLocation, dropoffLocation, paymentMethod)
+				.setProductId(product.getProductId()).build()).getBody();
+	}
+
+	private Product getProduct(final UberRidesSyncService service, final Location pickupLocation)
+			throws ApiException, NetworkException {
+		final List<Product> products = service.getProducts(pickupLocation.getLatitude(), pickupLocation.getLongitude())
+				.getBody().getProducts();
+
+		return pickProduct(products);
+	}
+
+	private Builder getRideRequestParametersBuilder(final Location pickupLocation,
+			final Location dropoffLocation,
+			final PaymentMethod paymentMethod) {
+		return new RideRequestParameters.Builder()
+				.setPickupCoordinates(pickupLocation.getLatitude(), pickupLocation.getLongitude())
+				.setDropoffCoordinates(dropoffLocation.getLatitude(), dropoffLocation.getLongitude())
+				.setPaymentMethodId(paymentMethod.getPaymentMethodId());
+	}
+
+	private UberRidesSyncService getService(final OAuth2Credentials credentials,
+			final String user,
+			final String authorizationCode) {
+		final Credential credential = credentials.authenticate(authorizationCode, user);
+
+		final Session session = new Session.Builder().setCredential(credential).setEnvironment(Environment.SANDBOX)
+				.build();
+
+		return UberRidesServices.createSync(session);
+	}
+
+	private OAuth2Credentials getCredentials() {
+		final Collection<Scope> scopes = new ArrayList<Scope>();
+		scopes.add(Scope.PROFILE);
+		scopes.add(Scope.REQUEST);
+		scopes.add(Scope.ALL_TRIPS);
+		scopes.add(Scope.HISTORY);
+		scopes.add(Scope.PLACES);
+		scopes.add(Scope.REQUEST_RECEIPT);
+		return new OAuth2Credentials.Builder()
+				.setClientSecrets(appProperties.getClientId(), appProperties.getClientSecret())
+				.setRedirectUri(OAUTH2_CALLBACK_URL).setScopes(scopes).build();
+	}
+
+	private static String getUserNameFromUser() throws IOException {
 		final BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		System.out.print("Enter the name of the Uber user: ");
 		return br.readLine();
 	}
 
-	private static String getAuthorizationCode() throws IOException {
+	private static String getAuthorizationCodeFromUser() throws IOException {
 		final BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		System.out.print("Paste the value of name 'code' here: ");
 		return br.readLine();
 	}
 
-	private void showSomeInfoUsingApp(final Location pickupLocation) throws ApiException, NetworkException {
-		final Session session = new Session.Builder().setServerToken(appProperties.getServerToken())
-				.setEnvironment(Environment.SANDBOX).build();
-		final UberRidesSyncService service = UberRidesServices.createSync(session);
-		final List<Product> products = service.getProducts(pickupLocation.getLatitude(), pickupLocation.getLongitude())
-				.getBody().getProducts();
-
-		System.out.println("Available products:");
-		for (final Product product : products) {
-			showProductInfo(service, product, null, pickupLocation);
-		}
-
-		final Product product = pickProduct(products);
-
-		System.out.println("Picked product productId: " + product.getProductId());
-	}
-
-	private static void issueAndCompleteRideRequest(final Session session,
-			final Location pickupLocation,
-			final Location dropoffLocation) throws ApiException, NetworkException {
-		final UberRidesSyncService service = UberRidesServices.createSync(session);
-
-		final String paymentMethodId = "paymentless";
-
-		final Builder rideRequestParametersBuilder = new RideRequestParameters.Builder()
-				.setPickupCoordinates(pickupLocation.getLatitude(), pickupLocation.getLongitude())
-				.setDropoffCoordinates(dropoffLocation.getLatitude(), dropoffLocation.getLongitude())
-				.setPaymentMethodId(paymentMethodId);
-
-		final List<Product> products = service.getProducts(pickupLocation.getLatitude(), pickupLocation.getLongitude())
-				.getBody().getProducts();
-
-		System.out.println("Available products:");
-		for (final Product product : products) {
-			showProductInfo(service, product, rideRequestParametersBuilder, pickupLocation);
-		}
-
-		final Product product = pickProduct(products);
-
-		System.out.println("Picked product productId: " + product.getProductId());
-
-		final Ride ride = service.requestRide(rideRequestParametersBuilder.setProductId(product.getProductId()).build())
-				.getBody();
-		final String rideId = ride.getRideId();
-
-		System.out.println("RideId: " + rideId);
-
-		updateSandboxRide(service, ride, RideStatus.ACCEPTED);
-		updateSandboxRide(service, ride, RideStatus.ARRIVING);
-		updateSandboxRide(service, ride, RideStatus.IN_PROGRESS);
-		updateSandboxRide(service, ride, RideStatus.COMPLETED);
-	}
-
-	private static void updateSandboxRide(final UberRidesSyncService service, final Ride ride, final RideStatus status)
+	private static void updateSandboxRide(final UberRidesSyncService service, final RideStatus status)
 			throws ApiException, NetworkException {
-		System.out.println("Status: " + service.getCurrentRide().getBody().getStatus());
-		service.updateSandboxRide(ride.getRideId(),
-				new SandboxRideRequestParameters.Builder().setStatus(status.getStatus()).build());
 		try {
-			System.out.println("Status: " + service.getCurrentRide().getBody().getStatus());
+			final Ride ride = service.getCurrentRide().getBody();
+			service.updateSandboxRide(ride.getRideId(),
+					new SandboxRideRequestParameters.Builder().setStatus(status.getStatus()).build());
 		} catch (final Exception e) {
-			System.out.println(
-					"Receipt total charged: " + service.getRideReceipt(ride.getRideId()).getBody().getTotalCharged());
 		}
 	}
 
-	private static void showProductInfo(final UberRidesSyncService service,
+	private void showProduct(final UberRidesSyncService service,
 			final Product product,
-			final Builder rideRequestParametersBuilder,
-			final Location pickupLocation) throws ApiException, NetworkException {
+			final Location pickupLocation,
+			final Location dropoffLocation,
+			final PaymentMethod paymentMethod) throws ApiException, NetworkException {
+
+		final Builder rideRequestParametersBuilder = getRideRequestParametersBuilder(pickupLocation, dropoffLocation,
+				paymentMethod);
 		final TimeEstimatesResponse etaResponse = service.getPickupTimeEstimates(pickupLocation.getLatitude(),
 				pickupLocation.getLongitude(), product.getProductId()).getBody();
-		System.out.println("DisplayName: " + product.getDisplayName());
-		System.out.println("{");
+		System.out.println("Product {");
+		System.out.println("\tDisplayName: " + product.getDisplayName());
 		System.out.println("\tDescription: " + product.getDescription());
 		System.out.println("\tProductId: " + product.getProductId());
 		System.out.println("\tCapacity: " + product.getCapacity());
@@ -176,15 +248,13 @@ public class PlayGround {
 		for (final TimeEstimate eta : etaResponse.getTimes()) {
 			System.out.println("\tETA in seconds: " + eta.getEstimate());
 		}
-		if (rideRequestParametersBuilder != null) {
-			final RideEstimate estimateRideResponse = service
-					.estimateRide(rideRequestParametersBuilder.setProductId(product.getProductId()).build()).getBody();
-			System.out.println("\tPickupEstimate in minutes: " + estimateRideResponse.getPickupEstimate());
-			System.out.println("\tPrice (Display): " + estimateRideResponse.getPrice().getDisplay());
-			System.out.println("\tTrip DistanceEstimate: " + estimateRideResponse.getTrip().getDistanceEstimate());
-			System.out.println("\tTrip DistanceUnit: " + estimateRideResponse.getTrip().getDistanceUnit());
-			System.out.println("\tDurationEstimate: " + estimateRideResponse.getTrip().getDurationEstimate());
-		}
+		final RideEstimate estimateRideResponse = service
+				.estimateRide(rideRequestParametersBuilder.setProductId(product.getProductId()).build()).getBody();
+		System.out.println("\tPickupEstimate in minutes: " + estimateRideResponse.getPickupEstimate());
+		System.out.println("\tPrice (Display): " + estimateRideResponse.getPrice().getDisplay());
+		System.out.println("\tTrip DistanceEstimate: " + estimateRideResponse.getTrip().getDistanceEstimate());
+		System.out.println("\tTrip DistanceUnit: " + estimateRideResponse.getTrip().getDistanceUnit());
+		System.out.println("\tDurationEstimate: " + estimateRideResponse.getTrip().getDurationEstimate());
 		System.out.println("}");
 	}
 
