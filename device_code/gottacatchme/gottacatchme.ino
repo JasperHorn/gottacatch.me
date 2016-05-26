@@ -115,9 +115,11 @@ struct location
   float longitude;
 } ;
 
+struct location object_location = {52.3702, 4.8952};
+
 struct location getLocation()
 {
-  return {52.3702, 4.8952};
+  return object_location;
 }
 
 void convertLong(byte* pOut, long in)
@@ -136,7 +138,11 @@ void loop() {
 
     byte msg[] = {0xEE, 0x00};
     if (result == RIGHT_CODE)
+    {
       msg[1] = 0x01;
+      object_location.latitude += 1;
+      object_location.longitude += 0.3;
+    }
     else
       msg[1] = 0x00;
 
