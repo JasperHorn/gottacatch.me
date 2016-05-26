@@ -15,13 +15,16 @@
 		.module('confApp')
 		.controller('userController', userController);
 
-	userController.$inject = ['$location', 'authService'];
+	userController.$inject = ['hintsService', '$scope'];
 
-	function userController($location, authService)
+	function userController(hintsService, $scope)
 	{
 		var that = this;
 
 		that.login = login;
+		
+		$scope.hints = {};
+		hintsService.getHints().then(function(data){$scope.hints = data});
 
 		(function initController()
 		{
