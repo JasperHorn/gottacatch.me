@@ -1,24 +1,34 @@
 package com.gcm.gottacatchme.hello;
 
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 public class ScoreService implements IScoreService
 {
-	Map<String, Integer> _scores;
+	Map<String, ScoreRow> _scoresMap;
+	List<ScoreRow> _scores;
 	
 	public ScoreService()
 	{
-		_scores = new HashMap<>();
+		_scoresMap = new HashMap<>();
 		
-		_scores.put("Jan", 75);
-		_scores.put("Jasper", 40);
-		_scores.put("Nico", 45);
-		_scores.put("Randolf", 80);
+		_scoresMap.put("Jan", new ScoreRow("Jan", 75));
+		_scoresMap.put("Jasper", new ScoreRow("Jasper", 40));
+		_scoresMap.put("Nico", new ScoreRow("Nico", 45));
+		_scoresMap.put("Randolf", new ScoreRow("Randolf", 80));
+		
+		_scores = new LinkedList<>();
+		
+		for (ScoreRow scoreRow : _scoresMap.values())
+		{
+			_scores.add(scoreRow);
+		}
 	}
 	
 	@Override
-	public Map<String, Integer> getScores() 
+	public List<ScoreRow> getScores() 
 	{
 		return _scores;
 	}
