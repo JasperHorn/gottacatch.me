@@ -14,6 +14,7 @@
 
 		service.getHints = getHints;
 		service.addNextHint = addNextHint;
+		service.resetHints = resetHints;
 
 		return service;
 
@@ -25,6 +26,11 @@
 		function addNextHint()
 		{
 			return $http.post('/rest/nexthint', 'next').then(handleSuccess, handleError('Error asking for the next hints'));
+		}
+		
+		function resetHints()
+		{
+			return $http.post('/rest/resethints', 'aaa').then(handleSuccess, handleError('Error resetting the next hints'));
 		}
 
 		// private functions

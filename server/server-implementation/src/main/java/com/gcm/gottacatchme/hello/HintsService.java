@@ -19,8 +19,6 @@ public class HintsService implements IHintsService
 		add(h1);
 	}};
 	
-	@GET
-	@Path("/hints")
 	public
 	Hint[] getHints()
 	{
@@ -28,8 +26,6 @@ public class HintsService implements IHintsService
 		return hints.toArray(new Hint[hints.size()]);
 	}
 	
-	@POST
-	@Path("/nexthint")
 	public
 	String addNextHint()
 	{
@@ -42,4 +38,22 @@ public class HintsService implements IHintsService
 		System.out.println("Next hint?");
 		return "ok";
 	}
+	
+	public
+	String resetHints()
+	{
+		System.out.println("resetting hints");
+		
+		hints = new ArrayList<Hint>(){{
+			Hint h1 = new Hint();
+
+			h1.setText("Battle");
+			h1.setImageUrl("http://www.britishbattles.com/english-civil-war/battle-edgehill/pikemen-battle-rocroi-1200.jpg");
+
+			add(h1);
+		}};
+		
+		return "ok";
+	}
+	
 }

@@ -19,11 +19,14 @@ import com.uber.sdk.rides.client.UberRidesServices;
 import com.uber.sdk.rides.client.UberRidesSyncService;
 import com.uber.sdk.rides.client.error.ApiException;
 import com.uber.sdk.rides.client.error.NetworkException;
+import com.uber.sdk.rides.client.model.PaymentMethod;
+import com.uber.sdk.rides.client.model.PaymentMethodsResponse;
 import com.uber.sdk.rides.client.model.Product;
 import com.uber.sdk.rides.client.model.Ride;
 import com.uber.sdk.rides.client.model.RideEstimate;
 import com.uber.sdk.rides.client.model.RideRequestParameters;
 import com.uber.sdk.rides.client.model.RideRequestParameters.Builder;
+import com.uber.sdk.rides.client.model.SandboxRideRequestParameters;
 import com.uber.sdk.rides.client.model.TimeEstimate;
 import com.uber.sdk.rides.client.model.TimeEstimatesResponse;
 
@@ -49,11 +52,15 @@ public class PlayGround {
 
 	private void test() {
 		try {
-			showSomeInfoUsingApp(TNW);
+			// showSomeInfoUsingApp(TNW);
 
 			final Collection<Scope> scopes = new ArrayList<Scope>();
 			scopes.add(Scope.PROFILE);
 			scopes.add(Scope.REQUEST);
+			scopes.add(Scope.ALL_TRIPS);
+			scopes.add(Scope.HISTORY);
+			scopes.add(Scope.PLACES);
+			scopes.add(Scope.REQUEST_RECEIPT);
 			final OAuth2Credentials credentials = new OAuth2Credentials.Builder()
 					.setClientSecrets(appProperties.getClientId(), appProperties.getClientSecret())
 					.setRedirectUri(OAUTH2_CALLBACK_URL).setScopes(scopes).build();
@@ -62,17 +69,24 @@ public class PlayGround {
 
 			System.out.println("Execute this URL in your browser: " + authorizationUrl);
 
+			final String user = getUserName();
 			final String authorizationCode = getAuthorizationCode();
 
-			final Credential credential = credentials.authenticate(authorizationCode, appProperties.getUser());
+			final Credential credential = credentials.authenticate(authorizationCode, user);
 
 			final Session session = new Session.Builder().setCredential(credential).setEnvironment(Environment.SANDBOX)
 					.build();
 
-			issueAndCancelRideRequest(session, TNW, HOME);
+			issueAndCompleteRideRequest(session, TNW, HOME);
 		} catch (final Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	private static String getUserName() throws IOException {
+		final BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		System.out.print("Enter the name of the Uber user: ");
+		return br.readLine();
 	}
 
 	private static String getAuthorizationCode() throws IOException {
@@ -98,13 +112,17 @@ public class PlayGround {
 		System.out.println("Picked product productId: " + product.getProductId());
 	}
 
-	private static void issueAndCancelRideRequest(final Session session,
+	private static void issueAndCompleteRideRequest(final Session session,
 			final Location pickupLocation,
 			final Location dropoffLocation) throws ApiException, NetworkException {
 		final UberRidesSyncService service = UberRidesServices.createSync(session);
+
+		final String paymentMethodId = "paymentless";
+
 		final Builder rideRequestParametersBuilder = new RideRequestParameters.Builder()
 				.setPickupCoordinates(pickupLocation.getLatitude(), pickupLocation.getLongitude())
-				.setDropoffCoordinates(dropoffLocation.getLatitude(), dropoffLocation.getLongitude());
+				.setDropoffCoordinates(dropoffLocation.getLatitude(), dropoffLocation.getLongitude())
+				.setPaymentMethodId(paymentMethodId);
 
 		final List<Product> products = service.getProducts(pickupLocation.getLatitude(), pickupLocation.getLongitude())
 				.getBody().getProducts();
@@ -121,16 +139,26 @@ public class PlayGround {
 		final Ride ride = service.requestRide(rideRequestParametersBuilder.setProductId(product.getProductId()).build())
 				.getBody();
 		final String rideId = ride.getRideId();
+
 		System.out.println("RideId: " + rideId);
 
-		System.out.println("Status: " + ride.getStatus());
+		updateSandboxRide(service, ride, RideStatus.ACCEPTED);
+		updateSandboxRide(service, ride, RideStatus.ARRIVING);
+		updateSandboxRide(service, ride, RideStatus.IN_PROGRESS);
+		updateSandboxRide(service, ride, RideStatus.COMPLETED);
+	}
 
-		System.out.println("Cancelling ride...");
-		final Response<Void> cancelRideResponse = service.cancelRide(rideId);
-		System.out.println("CancelRide status: " + cancelRideResponse.getStatus());
-		System.out.println("CancelRide reason: " + cancelRideResponse.getReason());
-
-		System.out.println("Status: " + ride.getStatus());
+	private static void updateSandboxRide(final UberRidesSyncService service, final Ride ride, final RideStatus status)
+			throws ApiException, NetworkException {
+		System.out.println("Status: " + service.getCurrentRide().getBody().getStatus());
+		service.updateSandboxRide(ride.getRideId(),
+				new SandboxRideRequestParameters.Builder().setStatus(status.getStatus()).build());
+		try {
+			System.out.println("Status: " + service.getCurrentRide().getBody().getStatus());
+		} catch (final Exception e) {
+			System.out.println(
+					"Receipt total charged: " + service.getRideReceipt(ride.getRideId()).getBody().getTotalCharged());
+		}
 	}
 
 	private static void showProductInfo(final UberRidesSyncService service,
@@ -172,6 +200,42 @@ public class PlayGround {
 		return null;
 	}
 
+	private enum RideStatus {
+
+		PROCESSING("processing", "The Request is matching to the most efficient available driver."),
+
+		NO_DRIVERS_AVAILABLE("no_drivers_available", "The Request was unfulfilled because no drivers were available."),
+
+		ACCEPTED("accepted",
+				"The Request has been accepted by a driver and is \"en route\" to the start location (i.e. start_latitude and start_longitude)."),
+
+		ARRIVING("arriving", "The driver has arrived or will be shortly."),
+
+		IN_PROGRESS("in_progress", "The Request is \"en route\" from the start location to the end location."),
+
+		DRIVER_CANCELED("driver_canceled", "The Request has been canceled by the driver."),
+
+		RIDER_CANCELED("rider_canceled", "The Request canceled by rider."),
+
+		COMPLETED("completed", "Request has been completed by the driver.");
+
+		private final String status;
+		private final String description;
+
+		private RideStatus(final String status, final String description) {
+			this.status = status;
+			this.description = description;
+		}
+
+		public String getStatus() {
+			return status;
+		}
+
+		public String getDescription() {
+			return description;
+		}
+	}
+
 	private static class Location {
 		private final float latitude;
 		private final float longitude;
@@ -194,7 +258,6 @@ public class PlayGround {
 		private final String clientId;
 		private final String clientSecret;
 		private final String serverToken;
-		private final String user;
 
 		private AppProperties(final InputStream inputStream) {
 			final Properties appProperties = new Properties();
@@ -207,7 +270,6 @@ public class PlayGround {
 			clientId = appProperties.getProperty("CLIENT_ID");
 			clientSecret = appProperties.getProperty("CLIENT_SECRET");
 			serverToken = appProperties.getProperty("SERVER_TOKEN");
-			user = appProperties.getProperty("USER");
 		}
 
 		public String getClientId() {
@@ -220,10 +282,6 @@ public class PlayGround {
 
 		public String getServerToken() {
 			return serverToken;
-		}
-
-		public String getUser() {
-			return user;
 		}
 	}
 }

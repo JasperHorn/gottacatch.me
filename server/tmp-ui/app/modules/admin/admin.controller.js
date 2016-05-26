@@ -19,6 +19,7 @@
 		$scope.hintcount = 0;
 		
 		$scope.nextHint = function() {$scope.hintcount++; hintsService.addNextHint();};
+		$scope.resetHints = function() {$scope.hintcount = 0; hintsService.resetHints();};
 	}
 
 })();
