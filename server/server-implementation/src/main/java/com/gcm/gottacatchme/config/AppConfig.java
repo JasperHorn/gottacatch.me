@@ -7,7 +7,9 @@ import org.springframework.context.annotation.Bean;
 
 import com.gcm.gottacatchme.hello.HelloService;
 import com.gcm.gottacatchme.hello.IHelloService;
+import com.gcm.gottacatchme.hello.IScoreService;
 import com.gcm.gottacatchme.hello.IThingStatus;
+import com.gcm.gottacatchme.hello.ScoreService;
 import com.gcm.gottacatchme.hello.ThingStatusService;
 import com.gcm.gottacatchme.thingyclient.*;
 import com.gcm.gottacatchme.messageservice.*;
@@ -38,6 +40,13 @@ public class AppConfig
 	public IThingStatus thingStatus(ThingyClient client)
 	{
 		return new ThingStatusService(client);
+	}
+	
+	@Bean
+	@Qualifier("com.wccgroup.elise.servicebean")
+	public IScoreService scoreStatus()
+	{
+		return new ScoreService();
 	}
 	
 	@Bean
